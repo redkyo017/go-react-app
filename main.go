@@ -27,16 +27,15 @@ func main() {
 	fmt.Println("Hello, World!")
 
 	environment := os.Getenv("ENV")
-	if environment == "" {
-		environment = "development"
-	}
 	log.Println("Environment: ", os.Getenv("ENV"), environment)
-	if environment != "production" {
-		log.Println("Loading .env file")
+	if environment != "development" {
 		err := godotenv.Load(".env")
 		if err != nil {
 			log.Fatal("Error loading .env file", err)
 		}
+	}
+	if environment == "" {
+		environment = "development"
 	}
 
 	MONGODB_URL := os.Getenv("MONGODB_URI")
