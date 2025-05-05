@@ -31,7 +31,8 @@ func main() {
 		environment = "development"
 	}
 	log.Println("Environment: ", os.Getenv("ENV"), environment)
-	if environment == "development" {
+	if environment != "production" {
+		log.Println("Loading .env file")
 		err := godotenv.Load(".env")
 		if err != nil {
 			log.Fatal("Error loading .env file", err)
