@@ -26,9 +26,15 @@ var collection *mongo.Collection
 func main() {
 	fmt.Println("Hello, World!")
 
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Error loading .env file", err)
+	environment := os.Getenv("ENV")
+	if environment == "" {
+		environment = "development"
+	}
+	if environment != "production" {
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatal("Error loading .env file", err)
+		}
 	}
 
 	MONGODB_URL := os.Getenv("MONGODB_URI")
@@ -50,12 +56,14 @@ func main() {
 	collection = client.Database("golang_db").Collection("todos")
 
 	app := fiber.New()
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:  "*",
-		AllowMethods:  "GET,POST,PATCH,DELETE",
-		AllowHeaders:  "Origin, Content-Type, Accept",
-		ExposeHeaders: "Content-Length",
-		MaxAge:        300}))
+	if environment == "development" {
+		app.Use(cors.New(cors.Config{
+			AllowOrigins:  "*",
+			AllowMethods:  "GET,POST,PATCH,DELETE",
+			AllowHeaders:  "Origin, Content-Type, Accept",
+			ExposeHeaders: "Content-Length",
+			MaxAge:        300}))
+	}
 	app.Get("/api/todos", GetTodo)
 	app.Post("/api/todos", CreateTodo)
 	app.Patch("/api/todos/:id", UpdateTodo)
@@ -64,6 +72,10 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
+	}
+
+	if environment == "production" {
+		app.Static("/", "./client/dist")
 	}
 
 	log.Fatal(app.Listen(":" + port))

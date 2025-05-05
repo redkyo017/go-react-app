@@ -69,7 +69,6 @@
 import { Flex, Spinner, Stack, Text } from "@chakra-ui/react";
 
 import TodoItem from "./TodoItem";
-import { use } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BASE_URL } from "../App";
 
