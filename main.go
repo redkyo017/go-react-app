@@ -30,6 +30,7 @@ func main() {
 	if environment == "" {
 		environment = "development"
 	}
+	log.Println("Environment: ", os.Getenv("ENV"))
 	if environment != "production" {
 		err := godotenv.Load(".env")
 		if err != nil {
